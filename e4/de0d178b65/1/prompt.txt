@@ -1,9 +1,125 @@
-$mk-issue Nix-profile-installation-bug.mp4
-
----
-
-$mk-pr 4937 Teknium
-
----
-
 $mk-pr 4934 Teknium
+
+---
+
+<skill>
+<name>mk-pr</name>
+<path>/Users/tanishqpalandurkar/.agents/skills/mk-pr/SKILL.md</path>
+---
+name: mk-pr
+description: Create and iterate on a GitHub pull request from an existing GitHub issue using `gh`. Use when given an issue number or URL and a maintainer username, needs to read an agent-friendly issue spec and linked evidence, implement the fix in the local checkout, run issue validation commands and relevant upstream CI-equivalent checks, open a PR linked to the issue in draft mode, request review from the named maintainer by GitHub username/handle, and keep iterating on CI or review feedback until required checks pass or a real blocker is reported.
+---
+
+# mk-pr
+
+Turn one existing GitHub issue into one pull request in the current repository.
+Accept only two user inputs: the issue identifier and the maintainer username/handle to request for review.
+Push branch updates to `origin` and open PRs against `upstream`; validate against checkout and issue-specific guidance.
+
+## Inputs
+
+- `issue`: GitHub issue number or URL for the repository in the current checkout.
+- `reviewer`: GitHub username/handle to request during PR creation.
+
+## Resolve Context First
+
+- Push the branch to `origin` and create the PR against `upstream`.
+- Capture the upstream/default base branch (for example `main`) for `gh pr create`.
+- If the issue is closed, ask: `Do you want to stop or continue? Yes or no, tell Agent what to do.`
+- If you cannot both read the issue and push a branch for the eventual PR, ask: `Do you want to stop or continue? Yes or no, tell Agent what to do.`
+
+## Resolve Contributing PR Rules
+
+- Read the root `CONTRIBUTING.md` for the repository you are editing:
+  - `git rev-parse --show-toplevel` (repo root)
+  - `<repo-root>/CONTRIBUTING.md` (if it exists)
+- If it contains a "## Pull Request Process" section, follow that for:
+  - branch naming requirements
+  - build/test/lint or local validation commands
+  - PR title/body conventions
+  - review or merge-readiness expectations
+  - commit message conventions
+- If the repo root has no `CONTRIBUTING.md`, derive local validation commands from issue instructions and existing repo CI/task definitions.
+- If the repo root has `CONTRIBUTING.md`, align commit message format, PR title/body template, and PR body sections/format with that file’s guidance before opening the commit or PR.
+
+## Read The Issue Spec
+
+- Fetch the issue with comments before touching code.
+- Treat the issue body as the source of truth for scope.
+- Extract and follow these sections when present:
+  - `Issue`
+  - `Steps`
+  - `Constraints`
+  - `Acceptance`
+- Inspect linked screenshots, videos, logs, or raw artifacts from the issue body or top-level comments when they clarify expected behavior or reproduction.
+- Preserve explicit file limits, commands, or acceptance strings from the issue. Do not broaden the task on your own.
+- If the structured sections are missing, continue only when the remaining issue text still gives a clear scope and a clear way to verify the fix.
+- If the issue is contradictory or too ambiguous to execute safely, report the blocker and ask: `Do you want to stop or continue? Yes or no, tell Agent what to do.`
+
+## Implementation Workflow
+
+1. Reason about the bug from the issue, linked evidence, and repository context.
+2. Make the smallest fix that satisfies the issue `Steps`, `Constraints`, and `Acceptance`.
+3. Run the validation command named in the issue first.
+4. Inspect `.github/workflows/` and run PR CI-equivalent local checks for the touched areas, following the order in Local Validation Rules.
+5. Fix only narrowly related failures that block verification.
+6. Commit only the scoped files with a commit message tied to the issue; if `CONTRIBUTING.md` is present in the repo root, match its commit-message conventions.
+7. Build the PR body before draft creation and follow `CONTRIBUTING.md` section/checklist/body-format requirements where present.
+8. Push the branch to `origin` before creating the PR.
+
+## Local Validation Rules
+
+- Run checks that are actually defined for the target repository before creating a draft PR.
+- Start with explicit commands from `CONTRIBUTING.md` if present.
+- Then run the validation command named in the issue if it exists and is applicable.
+- Next, inspect `.github/workflows/` and run closest local equivalents for the touched areas in a project-appropriate order (for example lint, unit tests, integration tests, build, then security checks if documented).
+- If the repository has a `Makefile`, `justfile`, or task runner config (`package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `pom.xml`, etc.), prefer those native project commands.
+- If no local validation guidance is available, run minimal targeted checks needed to avoid obvious breakage and ask the user before assuming broader coverage.
+- For any blocked check (missing secret, missing service, missing infra), report the blocker and ask: `Do you want to stop or continue? Yes or no, tell Agent what to do.`
+
+## PR Workflow
+
+- Build the PR body in a file instead of relying on interactive prompts.
+- Link the issue in the PR body with `Fixes #<issue_number>`.
+- Keep the PR body intentionally lean.
+- Use repository-local `CONTRIBUTING.md` requirements as the PR body checklist baseline:
+  - If contributing.md includes required sections (what changed, why, how tested, issue link, etc.), include those sections in `--body-file`.
+- Review the local diff and quick test output with the user before opening a PR.
+- Include results from all executed `Local Validation Rules` checks in the handoff.
+- Add a final output screenshot section only when the user provides it as a follow-up.
+- Ask: `Do you want to draft a PR now since the changes are in place? Yes or no? Tell Agent what to do.`
+- Continue only if the user says yes; otherwise pause and wait for instruction.
+- Open the PR as a draft PR after pushing the branch.
+- Use explicit base/head repos and branches. In fork workflows, target the upstream repo and the fork owner branch.
+- Prefer explicit `--title`, `--body-file`, `--base`, `--head`, `--reviewer`, and `--draft` flags.
+- Add the reviewer at PR creation with `gh pr create --reviewer <handle>`.
+
+## CI Loop
+
+- After branch push and PR creation, wait for required checks to finish.
+- Use `gh pr checks <pr> --required --watch` as the default watch command.
+- If checks have not started yet, confirm required checks are not blocked by workflow gating, branch protection, or missing permissions, then push a follow-up commit if needed to retrigger.
+- When a check fails, inspect the failing run or external details URL, fix the root cause locally, rerun the relevant local checks, commit, and push.
+- For GitHub Actions, fetch logs and investigate the exact failing step before editing code.
+- For external CI or production checks, use accessible logs or details URLs when possible. If the provider is unreadable from the current environment or needs missing credentials, report the exact blocker and ask: `Do you want to stop or continue? Yes or no, tell Agent what to do.`
+- Keep iterating until required checks pass or you hit a real blocker.
+
+## Ready For Review
+
+- Once the required checks pass, monitor and respond to the requested maintainer review.
+- Keep the reviewer assignment as the input-provided handle unless the user changes it.
+- After reviewer feedback, keep changes scoped to the issue unless the reviewer explicitly requests follow-up work.
+- After each follow-up push, rerun the relevant local validation and watch the required checks again.
+- Stay with the PR until the requested reviewer feedback and required checks are resolved, or until a concrete blocker prevents more progress.
+
+## Stop Conditions
+
+- On any stop condition, pause and ask:
+- `Do you want to stop or continue? Yes or no, tell Agent what to do.`
+- Missing GitHub auth, repository access, or push permission.
+- Missing reviewer username/handle.
+- Missing issue details needed to determine scope or acceptance.
+- Acceptance criteria that cannot be verified locally and whose remote checks are inaccessible.
+- Deployment or production checks that require unavailable secrets or environments.
+- Reviewer or CI feedback that clearly expands scope beyond the issue. Surface that separately instead of absorbing it silently.
+</skill>
