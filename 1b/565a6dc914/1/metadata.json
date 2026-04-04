@@ -1,0 +1,36 @@
+{
+  "cli_version": "0.5.2",
+  "checkpoint_id": "1b565a6dc914",
+  "session_id": "019d594d-5193-76c3-8d07-8fa7cfc4f1a7",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-04T17:22:38.864114Z",
+  "branch": "fix/nix-profile-aarch64-darwin-voice",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "nix/python.nix"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.4",
+  "turn_id": "ac5c6ee4c6a5",
+  "checkpoint_transcript_start": 953,
+  "transcript_lines_at_start": 953,
+  "token_usage": {
+    "input_tokens": 2646836,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2622720,
+    "output_tokens": 7971,
+    "api_call_count": 14
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-04T17:22:31.311558Z",
+    "agent_lines": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "agent_percentage": 0
+  }
+}
