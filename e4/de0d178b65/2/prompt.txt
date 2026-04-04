@@ -1,0 +1,5 @@
+/statusline
+
+---
+
+copy all the skills that are under ~/.agents/skills dir to ~/.claude/skills so that they all become visible to claude code as well.

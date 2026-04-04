@@ -3,7 +3,7 @@
   "checkpoint_id": "e4de0d178b65",
   "strategy": "manual-commit",
   "branch": "fix/nix-profile-installation-bug",
-  "checkpoints_count": 0,
+  "checkpoints_count": 2,
   "files_touched": [
     "nix/python.nix"
   ],
@@ -19,13 +19,19 @@
       "transcript": "/e4/de0d178b65/1/full.jsonl",
       "content_hash": "/e4/de0d178b65/1/content_hash.txt",
       "prompt": "/e4/de0d178b65/1/prompt.txt"
+    },
+    {
+      "metadata": "/e4/de0d178b65/2/metadata.json",
+      "transcript": "/e4/de0d178b65/2/full.jsonl",
+      "content_hash": "/e4/de0d178b65/2/content_hash.txt",
+      "prompt": "/e4/de0d178b65/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 3125260,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 2927360,
-    "output_tokens": 40749,
-    "api_call_count": 59
+    "input_tokens": 3125270,
+    "cache_creation_tokens": 7022,
+    "cache_read_tokens": 3024512,
+    "output_tokens": 41609,
+    "api_call_count": 65
   }
 }
