@@ -1,0 +1,25 @@
+{
+  "cli_version": "0.5.2",
+  "checkpoint_id": "1ab2074bd4f1",
+  "strategy": "manual-commit",
+  "branch": "fix/nix-profile-aarch64-darwin-voice",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "nix/python.nix"
+  ],
+  "sessions": [
+    {
+      "metadata": "/1a/b2074bd4f1/0/metadata.json",
+      "transcript": "/1a/b2074bd4f1/0/full.jsonl",
+      "content_hash": "/1a/b2074bd4f1/0/content_hash.txt",
+      "prompt": "/1a/b2074bd4f1/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 2494311,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2303232,
+    "output_tokens": 32364,
+    "api_call_count": 71
+  }
+}

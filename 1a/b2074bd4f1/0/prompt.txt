@@ -1,0 +1,29 @@
+$gh-fix-ci tell me how good those copilot suggestions are for pr #5079
+
+---
+
+yeah so i saw it was just reducing boilerplate for passthru
+
+---
+
+what's its first suggestion?
+
+---
+
+can you search in gh issues if there are issues related to the one that this PR#5079 is trying to fix.
+
+---
+
+nope. i want to search for related issues reported by other platform users facing the same issue i.e. installation fails due to incompatible wheel for onnxruntime pkg
+
+---
+
+take a look at the suggested changes and implement them for pr #5079. basically its asking to use pythonpackageoverrides conditionally for platforms using but haven't faced the problem yet. so we got to filter by the platform here and then override the pkgs
+
+---
+
+[Image #1] I've accepted few changes suggested by copilot. how do i pull them?
+
+---
+
+after accepting the upstream changes to resolve the merge conflicts, we got to redo the platform check and override
